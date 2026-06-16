@@ -58,36 +58,42 @@ const EXPERIENCES = [
     time: 'Dawn',
     title: 'Balcony Sunrise',
     desc: 'Cool highland air, the first gold light spilling over Ella Rock, and a fresh breakfast laid out on your private balcony.',
+    img: '/images/Balcony Sunrise.jfif',
   },
   {
     icon: '🍳',
     time: 'Morning',
     title: 'Legendary Breakfast',
     desc: 'Vegetarian, vegan, gluten-free pancakes, American, Asian — Udara\'s family cooks to your preference, every morning.',
+    img: '/images/Legendary Breakfast.jfif',
   },
   {
     icon: '🚶',
     time: 'Afternoon',
     title: 'Nine Arch Bridge',
     desc: 'A 20-minute walk through lush jungle brings you to the iconic Demodara viaduct framed in green.',
+    img: '/images/Nine Arch Bridge - Ella Sri Lanka.jfif',
   },
   {
     icon: '🏔️',
     time: 'Adventure',
     title: "Little Adam's Peak",
     desc: '45 minutes of easy trail with a summit panorama that changes the way you see the Sri Lankan highlands.',
+    img: '/images/Wanderlust Sri Lanka - Mini Adams Peak Ella.jfif',
   },
   {
     icon: '🌿',
     time: 'Afternoon',
     title: 'Spice Garden Tour',
     desc: 'Walk through a living pantry of cinnamon, cardamom, and pepper just minutes from your door.',
+    img: '/images/Spice Garden Tour.jfif',
   },
   {
     icon: '🌙',
     time: 'Evening',
     title: 'Golden Hour Views',
     desc: 'As the sky softens to amber, the Ella Gap becomes a canvas. Pour a tea and just be still.',
+    img: '/images/Golden Hour Dreams ✨.jfif',
   },
 ]
 
@@ -453,9 +459,13 @@ function HeroSection() {
 }
 
 function SceneCard() {
+  const imgRef = useRef<HTMLDivElement>(null)
+  const { scrollYProgress } = useScroll()
+  const imgY = useTransform(scrollYProgress, [0, 0.5], ['0%', '8%'])
+
   return (
     <div className="scene-card">
-      {/* Header */}
+      {/* Header bar */}
       <div className="scene-header">
         <div className="scene-header-left">
           <div className="scene-status-dot" />
@@ -464,19 +474,49 @@ function SceneCard() {
         <span className="scene-location-tag">Temple Rd, Ella</span>
       </div>
 
-      {/* 3D viewport window — transparent so the hero canvas shows through */}
-      <div className="scene-viewport">
-        <div className="scene-viewport-label">
-          <span>🏔️</span>
-          <span>Ella Rock, Sri Lanka</span>
-        </div>
+      {/* Hero image with parallax + cinematic overlays */}
+      <div className="scene-viewport" ref={imgRef}>
+
+        {/* Parallax image */}
+        <motion.div className="scene-img-parallax" style={{ y: imgY }}>
+          <img
+            src="/images/landing.jpg"
+            alt="Green Village Homestay — Ella Rock view, Sri Lanka"
+            className="scene-hero-img"
+          />
+        </motion.div>
+
+        {/* Layered cinematic overlays */}
+        <div className="scene-overlay-vignette" />
+        <div className="scene-overlay-bottom" />
+        <div className="scene-overlay-top" />
+
+        {/* Subtle shimmer sweep */}
+        <motion.div
+          className="scene-shimmer"
+          animate={{ x: ['-100%', '200%'] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'linear', repeatDelay: 5 }}
+        />
+
+        {/* Corner frame brackets */}
         <div className="scene-viewport-corner scene-viewport-corner-tl" />
         <div className="scene-viewport-corner scene-viewport-corner-tr" />
         <div className="scene-viewport-corner scene-viewport-corner-bl" />
         <div className="scene-viewport-corner scene-viewport-corner-br" />
+
+        {/* Location label */}
+        <motion.div
+          className="scene-viewport-label"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.2, duration: 0.7, ease: EASE_CINEMATIC }}
+        >
+          <span>📍</span>
+          <span>Ella Rock, Sri Lanka</span>
+        </motion.div>
       </div>
 
-      {/* Footer info */}
+      {/* Footer */}
       <div className="scene-footer">
         <div className="scene-footer-item">
           <span className="scene-footer-label">Property</span>
@@ -492,9 +532,9 @@ function SceneCard() {
       {/* Floating badges */}
       <motion.div
         className="scene-badge badge-rating"
-        initial={{ opacity: 0, scale: 0.8, y: 10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ delay: 1.4, duration: 0.6, ease: EASE_CINEMATIC }}
+        initial={{ opacity: 0, scale: 0.8, x: -10 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        transition={{ delay: 1.4, duration: 0.7, ease: EASE_CINEMATIC }}
       >
         <span className="badge-star">★</span>
         <div>
@@ -505,9 +545,9 @@ function SceneCard() {
 
       <motion.div
         className="scene-badge badge-breakfast"
-        initial={{ opacity: 0, scale: 0.8, y: -10 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ delay: 1.7, duration: 0.6, ease: EASE_CINEMATIC }}
+        initial={{ opacity: 0, scale: 0.8, x: 10 }}
+        animate={{ opacity: 1, scale: 1, x: 0 }}
+        transition={{ delay: 1.7, duration: 0.7, ease: EASE_CINEMATIC }}
       >
         <span>🍳</span>
         <div>
@@ -556,15 +596,62 @@ function ExperienceSection() {
               key={exp.title}
               className="exp-card"
               variants={fadeUp}
-              whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              whileHover="hover"
+              initial="rest"
+              animate="rest"
             >
-              <div className="exp-card-icon">{exp.icon}</div>
-              <div className="exp-card-meta">
-                <span className="exp-time">{exp.time}</span>
+              {/* Image layer — reveals on hover */}
+              <motion.div
+                className="exp-card-img"
+                variants={{
+                  rest:  { opacity: 0, scale: 1.08 },
+                  hover: { opacity: 1,  scale: 1 },
+                }}
+                transition={{ duration: 0.55, ease: EASE_CINEMATIC }}
+              >
+                <img src={exp.img} alt={exp.title} loading="lazy" />
+                <div className="exp-card-img-vignette" />
+              </motion.div>
+
+              {/* Content */}
+              <div className="exp-card-content">
+                <div className="exp-card-icon">{exp.icon}</div>
+                <div className="exp-card-meta">
+                  <span className="exp-time">{exp.time}</span>
+                </div>
+                <motion.h3
+                  className="exp-card-title"
+                  variants={{
+                    rest:  { y: 0 },
+                    hover: { y: -4 },
+                  }}
+                  transition={{ duration: 0.4, ease: EASE_CINEMATIC }}
+                >
+                  {exp.title}
+                </motion.h3>
+                <motion.p
+                  className="exp-card-desc"
+                  variants={{
+                    rest:  { opacity: 1, y: 0 },
+                    hover: { opacity: 0.9, y: -2 },
+                  }}
+                  transition={{ duration: 0.4, ease: EASE_CINEMATIC }}
+                >
+                  {exp.desc}
+                </motion.p>
               </div>
-              <h3 className="exp-card-title">{exp.title}</h3>
-              <p className="exp-card-desc">{exp.desc}</p>
+
               <div className="exp-card-number">0{i + 1}</div>
+
+              {/* Accent line that slides in on hover */}
+              <motion.div
+                className="exp-card-accent-line"
+                variants={{
+                  rest:  { scaleX: 0, originX: 0 },
+                  hover: { scaleX: 1, originX: 0 },
+                }}
+                transition={{ duration: 0.45, ease: EASE_CINEMATIC }}
+              />
             </motion.article>
           ))}
         </motion.div>

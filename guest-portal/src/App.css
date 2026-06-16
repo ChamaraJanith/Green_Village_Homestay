@@ -551,19 +551,78 @@ body {
 .scene-viewport {
   position: relative;
   height: 340px;
-  background: transparent;
   overflow: hidden;
   border-radius: 0;
+  background: #07120a;
+}
+
+/* Parallax image container */
+.scene-img-parallax {
+  position: absolute;
+  inset: -8% 0;
+  will-change: transform;
+}
+
+.scene-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+
+/* Cinematic overlay layers */
+.scene-overlay-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(4, 10, 5, 0.55) 100%);
+  pointer-events: none;
+}
+
+.scene-overlay-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 55%;
+  background: linear-gradient(to top, rgba(5, 12, 7, 0.88) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.scene-overlay-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30%;
+  background: linear-gradient(to bottom, rgba(5, 12, 7, 0.45) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+/* Shimmer sweep animation */
+.scene-shimmer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.06) 50%,
+    transparent 80%
+  );
+  pointer-events: none;
+  z-index: 3;
 }
 
 /* Corner frame decorations */
 .scene-viewport-corner {
   position: absolute;
-  width: 20px;
-  height: 20px;
-  border-color: rgba(217, 255, 120, 0.4);
+  width: 18px;
+  height: 18px;
+  border-color: rgba(217, 255, 120, 0.5);
   border-style: solid;
-  z-index: 2;
+  z-index: 4;
 }
 
 .scene-viewport-corner-tl { top: 10px; left: 10px; border-width: 2px 0 0 2px; }
@@ -581,13 +640,13 @@ body {
   gap: 0.5rem;
   padding: 0.4rem 1rem;
   border-radius: 999px;
-  background: rgba(5, 12, 7, 0.7);
-  border: 1px solid rgba(255,255,255,0.12);
-  backdrop-filter: blur(12px);
+  background: rgba(5, 12, 7, 0.75);
+  border: 1px solid rgba(255,255,255,0.15);
+  backdrop-filter: blur(14px);
   font-size: 0.8rem;
   color: var(--cream-dim);
   white-space: nowrap;
-  z-index: 2;
+  z-index: 4;
 }
 
 /* Footer */
@@ -786,14 +845,17 @@ body {
 
 .exp-card {
   position: relative;
-  padding: 2rem;
+  padding: 0;
   border-radius: var(--radius-lg);
   background: rgba(9, 19, 11, 0.7);
   border: 1px solid rgba(255,255,255,0.09);
   backdrop-filter: blur(20px);
   overflow: hidden;
   cursor: default;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.4s ease, transform 0.4s var(--ease-cinematic);
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
 }
 
 .exp-card::before {
@@ -802,17 +864,59 @@ body {
   inset: 0;
   background: linear-gradient(135deg, rgba(255,255,255,0.03), transparent 50%);
   pointer-events: none;
+  z-index: 1;
 }
 
 .exp-card:hover {
-  border-color: rgba(217,255,120,0.15);
-  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  border-color: rgba(217,255,120,0.25);
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+  transform: translateY(-10px);
+}
+
+/* Image layer — hidden by default, fades in on hover */
+.exp-card-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+}
+
+.exp-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+.exp-card-img-vignette {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 12, 7, 0.2) 0%,
+    rgba(5, 12, 7, 0.55) 50%,
+    rgba(5, 12, 7, 0.92) 100%
+  );
+}
+
+/* Content sits above image */
+.exp-card-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .exp-card-icon {
   font-size: 2.2rem;
   margin-bottom: 1rem;
   display: block;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));
 }
 
 .exp-card-meta {
@@ -827,8 +931,8 @@ body {
   color: var(--accent);
   padding: 0.2rem 0.6rem;
   border-radius: 999px;
-  background: rgba(217,255,120,0.1);
-  border: 1px solid rgba(217,255,120,0.2);
+  background: rgba(217,255,120,0.12);
+  border: 1px solid rgba(217,255,120,0.25);
 }
 
 .exp-card-title {
@@ -837,6 +941,7 @@ body {
   color: #fff8ee;
   margin-bottom: 0.75rem;
   line-height: 1.2;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
 }
 
 .exp-card-desc {
@@ -857,6 +962,19 @@ body {
   pointer-events: none;
   user-select: none;
   mix-blend-mode: overlay;
+  z-index: 2;
+}
+
+/* Accent line at bottom on hover */
+.exp-card-accent-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #d9ff78, #9cf2a7);
+  z-index: 3;
+  transform-origin: left;
 }
 
 /* ─── ROOMS SECTION ──────────────────────────────────────────────────────────── */
