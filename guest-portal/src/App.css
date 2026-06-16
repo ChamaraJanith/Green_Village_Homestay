@@ -1028,6 +1028,16 @@ body {
   overflow: hidden;
 }
 
+/* Real photo uploaded via admin — covers the visual area */
+.room-card-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .room-landscape {
   position: absolute;
   inset: 0;

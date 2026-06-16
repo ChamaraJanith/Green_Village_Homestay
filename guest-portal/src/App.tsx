@@ -660,9 +660,60 @@ function ExperienceSection() {
   )
 }
 
+// ─── ROOM TYPE (DB shape) ────────────────────────────────────────────────────
+interface RoomRecord {
+  id: number
+  sort_order: number
+  tag: string
+  name: string
+  description: string
+  features: string[]
+  price: string
+  gradient: string
+  accent: string
+  image_url: string | null
+}
+
+const API_URL = (import.meta as ImportMeta & { env: { VITE_API_URL?: string } }).env.VITE_API_URL ?? 'http://localhost:4000'
+
 function RoomsSection() {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
+
+  // Try to load rooms from the DB; fall back to static ROOMS constant
+  const [rooms, setRooms] = useState<RoomRecord[]>([])
+
+  useEffect(() => {
+    fetch(`${API_URL}/rooms`)
+      .then((r) => r.ok ? r.json() as Promise<RoomRecord[]> : Promise.reject())
+      .then((data) => { if (data?.length) setRooms(data) })
+      .catch(() => {
+        // API unreachable — map static ROOMS into RoomRecord shape
+        setRooms(
+          ROOMS.map((r, i) => ({
+            id: i + 1,
+            sort_order: i,
+            tag: r.tag,
+            name: r.name,
+            description: r.desc,
+            features: r.features,
+            price: r.price,
+            gradient: r.gradient,
+            accent: r.accent,
+            image_url: null,
+          }))
+        )
+      })
+  }, [])
+
+  // While fetching (rooms is empty), still render static data so layout isn't blank
+  const displayRooms: RoomRecord[] = rooms.length
+    ? rooms
+    : ROOMS.map((r, i) => ({
+        id: i + 1, sort_order: i, tag: r.tag, name: r.name,
+        description: r.desc, features: r.features, price: r.price,
+        gradient: r.gradient, accent: r.accent, image_url: null,
+      }))
 
   return (
     <section className="rooms-section" id="rooms" ref={ref}>
@@ -685,30 +736,39 @@ function RoomsSection() {
           initial="hidden"
           animate={isInView ? 'visible' : 'hidden'}
         >
-          {ROOMS.map((room, i) => (
+          {displayRooms.map((room, i) => (
             <motion.article
-              key={room.name}
+              key={room.id}
               className={`room-card ${i === 0 ? 'room-card-featured' : ''}`}
               variants={fadeUp}
               whileHover={{ y: -8, transition: { duration: 0.3 } }}
             >
               <div className="room-card-visual">
-                <div className="room-landscape">
-                  <div className="room-sky" />
-                  <div className="room-mountain-1" />
-                  <div className="room-mountain-2" />
-                  <div className="room-balcony" />
-                  <motion.div
-                    className="room-mist"
-                    animate={{ opacity: [0.3, 0.7, 0.3], x: [0, 20, 0] }}
-                    transition={{ duration: 8 + i * 2, repeat: Infinity, ease: 'easeInOut' }}
+                {room.image_url ? (
+                  <img
+                    src={room.image_url}
+                    alt={room.name}
+                    className="room-card-photo"
+                    loading="lazy"
                   />
-                </div>
+                ) : (
+                  <div className="room-landscape">
+                    <div className="room-sky" />
+                    <div className="room-mountain-1" />
+                    <div className="room-mountain-2" />
+                    <div className="room-balcony" />
+                    <motion.div
+                      className="room-mist"
+                      animate={{ opacity: [0.3, 0.7, 0.3], x: [0, 20, 0] }}
+                      transition={{ duration: 8 + i * 2, repeat: Infinity, ease: 'easeInOut' }}
+                    />
+                  </div>
+                )}
                 <span className="room-tag">{room.tag}</span>
               </div>
               <div className="room-card-body">
                 <h3 className="room-name">{room.name}</h3>
-                <p className="room-desc">{room.desc}</p>
+                <p className="room-desc">{room.description}</p>
                 <ul className="room-features">
                   {room.features.map((f) => (
                     <li key={f}>
