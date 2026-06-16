@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch app.ts",
     "start": "tsx app.ts",
-    "build": "npm install --prefix ../guest-portal && npm run build --prefix ../guest-portal",
+    "build": "npm install --legacy-peer-deps --prefix ../guest-portal && npm run build --prefix ../guest-portal",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
