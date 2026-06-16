@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "tsx watch app.ts",
     "start": "tsx app.ts",
+    "build": "echo 'No build step required'",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
