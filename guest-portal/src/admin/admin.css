@@ -1,0 +1,14 @@
+/* ── Image upload zone hover overlay ───────────────────────── */
+
+/* reveal the overlay when hovering over a card that already has an image */
+.image-zone-has-img:hover .image-overlay {
+  opacity: 1 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* input focus ring */
+input:focus,
+textarea:focus {
+  border-color: rgba(217, 255, 120, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(217, 255, 120, 0.08);
+}
