@@ -400,8 +400,8 @@ function FloatingIsland() {
         <pointLight color="#ffcc66" intensity={0.5} distance={2} />
       </group>
       {/* Bottom rock */}
-      <mesh position={[0, -0.7, 0]}>
-        <coneGeometry args={[1.2, 0.8, 8]} rotation={[Math.PI, 0, 0]} />
+      <mesh position={[0, -0.7, 0]} rotation={[Math.PI, 0, 0]}>
+        <coneGeometry args={[1.2, 0.8, 8]} />
         <meshStandardMaterial color="#0a1a0e" roughness={1} flatShading />
       </mesh>
     </group>
