@@ -182,6 +182,15 @@ app.delete('/admin/rooms/:id/image', requireAuth, async (req: Request, res: Resp
   }
 });
 
+// ─── SERVE FRONTEND ──────────────────────────────────────────────────────────
+
+const frontendDist = path.join(__dirname, '../guest-portal/dist');
+app.use(express.static(frontendDist));
+
+app.get('*', (req: Request, res: Response) => {
+  res.sendFile(path.join(frontendDist, 'index.html'));
+});
+
 // ─── INIT DB & START ─────────────────────────────────────────────────────────
 
 async function initDb(): Promise<void> {
